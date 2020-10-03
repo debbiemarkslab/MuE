@@ -1,50 +1,60 @@
 
+
 # MuE
 Tools for developing H-MuE models in Edward2. See  [Weinstein and Marks (2020)](https://www.biorxiv.org/content/10.1101/2020.07.31.231381v1) for details.
 
  - The core `mue` package has tools for working with the MuE distribution.
- - The `models` folder of the repo has two example H-MuE models, the FactorMuE and the RegressMuE, which illustrate how to use the `mue` package.
+ - The `models` and `sparse-models` folders each have two example H-MuE models, the FactorMuE and the RegressMuE, which illustrate how to use the `mue` package.
 
 ## Installation
 
-### Default:
-
-To install, run:
+To install the package, create a new python 3 virtual environment (eg. using conda) and run:
 
     pip install "git+https://github.com/debbiemarkslab/MuE.git#egg=MuE[extras]" --use-feature=2020-resolver
 
     pip install "git+https://github.com/debbiemarkslab/edward2.git#egg=edward2"
 
-### Minimal:
+This shouldn't take more than a minute or two. You can find out more about the package requirements in the `setup.py` file.
 
-For a minimal installation (the MuE package alone, and not the example models and analysis scripts) run:
+## Demonstration H-MuE models
 
-    pip install "git+https://github.com/debbiemarkslab/MuE.git#egg=MuE" --use-feature=2020-resolver
-
-    pip install "git+https://github.com/debbiemarkslab/edward2.git#egg=edward2"
-
-## Example H-MuE models
-
-To run the example models, first clone the MuE repo and navigate to the `models` directory. Then run the scripts below. The output of each run, including plots of point estimates of key parameters, is saved in the subdirectory `examples/logs`. You can look at the optimization curve using `tensorboard --logdir=./examples/logs`.
+To run the example models, first clone this MuE repo and navigate to the `sparse-models` directory.
+Each model (`FactorMuE.py` and `RegressMuE.py`) can be configured with a config file, such as `examples/factor_config.cfg` (for `FactorMuE.py`) and  `examples/regress_config.cfg` (for `RegressMuE.py`). The config file sets the dataset, hyperparameters, training time, etc. Descriptions of all the options can be found in the config files themselves.
+The output of each run, including plots of point estimates of key parameters, is currently configured to be saved in the subdirectory `examples/logs`.
+You can inspect the ELBO optimization curve by running `tensorboard --logdir=./examples/logs` from the `sparse-models` directory.
+After training,
 
 ### FactorMuE
 
-Train the model `FactorMuE.py` with the (annotated) config file `examples/factor_config.cfg`.
+To run the example FactorMuE model, on the example dataset `examples/data1.fasta`, enter
 
     python FactorMuE.py examples/factor_config.cfg
 
-Visualize the a latent space vector in ancestral sequence space (replace "####" with the timestamp of your output folder):
+The model should take roughly ~1 min. to finish the training run (100 epochs). In `examples/logs` you should find a new folder, named with a timestamp corresponding the when the run began (eg. 20201003-144700 for Oct. 3, 2020, 2:47 pm). This contains:
 
-    python visualize_FactorMuE_results.py examples/logs/####/config.cfg --z_plot=True --proj_shift=True --z_tail=[-0.25] --z_head=[0.25] --seq_ref=examples/data1.fasta
+ - A summary of the run in `config.cfg`, which copies the input config file but also adds scalar results such as the heldout perplexity. Under the `[results]` heading the entry `heldout_perplex` should be roughly 2.0 in this example.
+ - A tensorflow log file (the filename starts with `events.out`), which can be read by tensorboard.
+ - Three plots, showing the mean and variance of the posterior latent representation (`z.pdf` there should be four distinct points near zero) as well as the posterior mean mutation matrix (`l.pdf`) and the posterior mean deletion and insertion parameters (`ur.pdf` all the points should be very close to zero in this example).
+ - The detailed results in `results.dill`. This file is saved using the `dill` package https://dill.readthedocs.io/en/latest/dill.html. An illustration of how to load and analyze these results can be found in `visualize_FactorMuE_results.py`.
+
+To visualize the results of the model, we often want to project vectors from the latent space onto a reference sequence (this is described in detail in the article). The script `visualize_FactorMuE_results.py` provides a tool for accomplishing this. Run the following command, replacing "####" with the timestamp of your output folder:
+
+    python visualize_FactorMuE_results.py examples/logs/####/config.cfg --z_plot=True --proj_shift=True --z_tail=[0.1] --z_head=[0.2] --seq_ref=examples/data1.fasta
+
+`z_tail` sets the position of the start of the latent space vector and `z_head` sets the position of the end of the latent space vector. The first entry in the fasta file input to `seq_ref` controls the reference sequence (in this case, ATAT).  The output will be in a new time-stamped folder within the model output folder `examples/logs/####`.  You'll find plots of
+ - The projected tail and head of the vector, represented as a logo (`aligned_tail_logo.pdf` and `aligned_head_logo.pdf`), and the difference between them (`aligned_shift_logo.pdf`).
+ - The magnitude of the shift in amino acid preference across the reference sequence (`aligned_shift_magnitude.pdf`), which is the nu vector described in the supplementary material of the paper. In this small example dataset, there isn't enough evidence for the model to find much change across the latent space, so the magnitude should be small (less than 0.1).
 
 ### RegressMuE
-Train the model `RegressMuE.py` with the (annotated) config file `examples/regress_config.cfg`.
+The `RegressMuE.py` works the same way. You can run the example dataset (with the covariate file `data1_covariate.csv`):
 
     python RegressMuE.py examples/regress_config.cfg
 
-Visualize the shift in the ancestral sequence with changing covariates (replace "####" with the timestamp of your output folder):
+Then visualize the shift in the ancestral sequence with changing covariates, rather than changing latent representation (replace "####" with the timestamp of your output folder):
 
     python visualize_RegressMuE_results.py examples/logs/####/config.cfg --proj_shift=True --z_tail=[1,0] --z_head=[0,1] --covar_ref=examples/data1_covariate.csv --seq_ref=examples/data1.fasta
+
+The resulting plot `aligned_shift_logo` should show the nucleotide T gaining in probability at positions 1 and 3 of the logo, while the nucleotide C drops in probability about the same amount, revealing that sequences with covariate [0,1] are more likely to have a T and less likely to have a C at these positions when compared to sequences with covariate [1,0].
 
 ### Running on your own data
 
@@ -92,12 +102,9 @@ If you start getting NaNs in the estimated ELBO, lower the learning rate. Increa
 
 Usually the number of epochs of KL annealing, `anneal_epochs`, is set to about half the total number of training epochs, `max_epochs`. If you don't find much structure in the FactorMuE latent space, you can increase `anneal_epochs` to be much larger than `max_epochs` to force the model into the auto-encoding limit.
 
-## Harvard Medical School-specific pointers
-Training is dramatically faster on a GPU. In your slurm script, include the flag
+## Tests
+To run the unit tests, navigate to the `tests` directory of the repo and run
 
-    #SBATCH -p gpu
+	pytest
 
-and load the gcc and cuda modules
-
-    module load gcc/6.2.0
-    module load cuda/10.1
+All tests should pass.

@@ -617,7 +617,7 @@ def main(config):
     visualize(FactorMuE_variational, embed_mean, embed_std, out_folder)
 
     # Save results.
-    result_file = os.path.join(out_folder, 'results.pickle')
+    result_file = os.path.join(out_folder, 'results.dill')
     with open(result_file, 'wb') as rw:
         dill.dump({'FactorMuE_variational': FactorMuE_variational,
                    'trainable_variables': trainable_variables,

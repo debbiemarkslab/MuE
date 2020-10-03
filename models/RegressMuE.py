@@ -486,7 +486,7 @@ def main(config):
     visualize(RegressMuE_variational, out_folder)
 
     # Save results.
-    result_file = os.path.join(out_folder, 'results.pickle')
+    result_file = os.path.join(out_folder, 'results.dill')
     with open(result_file, 'wb') as rw:
         dill.dump({'RegressMuE_variational': RegressMuE_variational,
                    'trainable_variables': trainable_variables}, rw)
