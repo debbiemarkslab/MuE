@@ -1,0 +1,5 @@
+*.DS_Store
+*__pycache__
+models/examples/logs/2*
+O2
+sparse_models/examples/logs/2*

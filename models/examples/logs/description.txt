@@ -1,0 +1,5 @@
+You can visualize training curves by running
+
+tensorboard --logdir=.
+
+in this directory.
