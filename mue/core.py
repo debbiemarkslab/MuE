@@ -158,7 +158,7 @@ def forward_mean(a0, a, e, num):
 
 
 def hmm_log_prob(distr, x, xlen):
-    """Correct and fast log prob. calculation, unlike tfp's."""
+    """Fast log prob. calculation."""
     a0 = distr.initial_distribution.logits
     a = distr.transition_distribution.logits
     e = distr.observation_distribution.logits
@@ -166,7 +166,7 @@ def hmm_log_prob(distr, x, xlen):
 
 
 def hmm_mean(distr, xlen):
-    """Fast mean calculation, unlike tfp's."""
+    """Fast mean calculation."""
     a0 = distr.initial_distribution.logits
     a = distr.transition_distribution.logits
     e = distr.observation_distribution.logits

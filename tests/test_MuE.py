@@ -185,13 +185,13 @@ def test_MuE_encode():
     latent_length = 4
     latent_alphabet_size = 4
     alphabet_size = 3
-    transfer_mats = mue.get_phmm_transfer(latent_length, dtype=dtype)
+    transfer_mats = mue.make_transfer(latent_length, dtype=dtype)
     padded_data_length = 5
     eps = 1e-32
 
-    chk_enc = mue.MuE_encode(x, qln0, rln0, lln0, latent_length,
-                             latent_alphabet_size, alphabet_size,
-                             padded_data_length, transfer_mats, dtype, eps)
+    chk_enc = mue.encode(x, qln0, rln0, lln0, latent_length,
+                         latent_alphabet_size, alphabet_size,
+                         padded_data_length, transfer_mats, dtype, eps)
     tst_enc = np.array([[0, 1, 0, 0],
                         [1, 0, 0, 0],
                         [0, 0, 0, 1],

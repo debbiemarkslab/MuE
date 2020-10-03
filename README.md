@@ -11,17 +11,17 @@ Tools for developing H-MuE models in Edward2. See  [Weinstein and Marks (2020)](
 
 To install, run:
 
-    pip install "git+https://github.com/EWeinstein/MuE.git#egg=MuE[extras]" --use-feature=2020-resolver
+    pip install "git+https://github.com/debbiemarkslab/MuE.git#egg=MuE[extras]" --use-feature=2020-resolver
 
-    pip install "git+https://github.com/EWeinstein/edward2.git#egg=edward2"
+    pip install "git+https://github.com/debbiemarkslab/edward2.git#egg=edward2"
 
 ### Minimal:
 
 For a minimal installation (the MuE package alone, and not the example models and analysis scripts) run:
 
-    pip install "git+https://github.com/EWeinstein/MuE.git#egg=MuE" --use-feature=2020-resolver
+    pip install "git+https://github.com/debbiemarkslab/MuE.git#egg=MuE" --use-feature=2020-resolver
 
-    pip install "git+https://github.com/EWeinstein/edward2.git#egg=edward2"
+    pip install "git+https://github.com/debbiemarkslab/edward2.git#egg=edward2"
 
 ## Example H-MuE models
 
@@ -35,7 +35,7 @@ Train the model `FactorMuE.py` with the (annotated) config file `examples/factor
 
 Visualize the a latent space vector in ancestral sequence space (replace "####" with the timestamp of your output folder):
 
-    python visualize_FactorMuE_results.py examples/logs/####/config.cfg --z_plot=True --proj_shift=True --z_tail=[-0.25] --z_head=[0.25] --seq_ref=examples/data2.fasta
+    python visualize_FactorMuE_results.py examples/logs/####/config.cfg --z_plot=True --proj_shift=True --z_tail=[-0.25] --z_head=[0.25] --seq_ref=examples/data1.fasta
 
 ### RegressMuE
 Train the model `RegressMuE.py` with the (annotated) config file `examples/regress_config.cfg`.

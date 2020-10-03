@@ -49,7 +49,7 @@ def RegressMuE(z, latent_dims, latent_length, latent_alphabet_size,
     # Insert biases.
     vcln = tf.einsum('j,jkl->kl', z, bt[1, :, :, :]) + b0[1, :, :]
 
-    # Assemble priors.
+    # Assemble priors -- in this version, we use a Dirichlet.
     uc, rc, lc = get_prior_conc(
                     latent_length, latent_alphabet_size, alphabet_size,
                     u_conc, r_conc, l_conc, dtype=dtype)

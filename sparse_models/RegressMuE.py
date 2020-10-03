@@ -73,22 +73,13 @@ def RegressMuE(z, latent_dims, latent_length, latent_alphabet_size,
     return x
 
 
-def build_trainable_dirichlet(prior_conc, name=None, dtype=tf.float64):
-    """A Dirichlet distribution for VI"""
-    # Concentration parameter, initialized with prior.
-    conc = tf.Variable(Dirichlet(prior_conc))
-
-    def dirichlet():
-        # Construct the VI distribution.
-        return Dirichlet(tf.nn.softplus(conc), name=name)
-
-    return dirichlet, [conc]
-
-
-def build_trainable_normal(shape, name=None, dtype=tf.float64):
+def build_trainable_normal(shape, init_mean=None, name=None, dtype=tf.float64):
     """A normal distribution for VI."""
     # Parameters.
-    mean = tf.Variable(tf.random.normal(shape, dtype=dtype))
+    if init_mean is None:
+        mean = tf.Variable(tf.random.normal(shape, dtype=dtype))
+    else:
+        mean = tf.Variable(tf.random.normal(shape, dtype=dtype) + init_mean)
     scale = tf.Variable(tf.random.normal(shape, dtype=dtype))
 
     def normal():
@@ -114,9 +105,12 @@ def build_RegressMuE_variational(latent_dims, latent_length,
     QB, qb0_params = build_trainable_normal(
             [2, latent_length+1, latent_alphabet_size],
             name="qb0", dtype=dtype)
-    QU, qu_params = build_trainable_dirichlet(uc, name="qu", dtype=dtype)
-    QR, qr_params = build_trainable_dirichlet(rc, name="qr", dtype=dtype)
-    QL, ql_params = build_trainable_dirichlet(lc, name="ql", dtype=dtype)
+    QU, qu_params = build_trainable_normal(uc.shape, init_mean=uc,
+                                           name="qu", dtype=dtype)
+    QR, qr_params = build_trainable_normal(rc.shape, init_mean=rc,
+                                           name="qr", dtype=dtype)
+    QL, ql_params = build_trainable_normal(lc.shape, init_mean=lc,
+                                           name="ql", dtype=dtype)
 
     # Consolidate trainable parameters.
     parameters = qbt_params + qb0_params + qu_params + qr_params + ql_params
@@ -405,15 +399,18 @@ def visualize(RegressMuE_variational, out_folder):
     qbt, qb0, qu, qr, ql = RegressMuE_variational()
 
     plt.figure(figsize=(8, 6))
-    plt.plot(qr.distribution.mean().numpy()[:, 1], 'o', label='insert')
-    plt.plot(qu.distribution.mean().numpy()[:, 1], 'o', label='delete')
+    plt.plot(tf.math.softmax(qr.distribution.mean(), axis=1).numpy()[:, 1],
+             'o', label='insert')
+    plt.plot(tf.math.softmax(qu.distribution.mean(), axis=1).numpy()[:, 1],
+             'o', label='delete')
     plt.legend(fontsize=18)
     plt.xlabel('position', fontsize=18)
     plt.ylabel('mean posterior probability', fontsize=16)
     plt.savefig(os.path.join(out_folder, 'ur.pdf'))
 
     plt.figure(figsize=(8, 8))
-    plt.imshow(ql.distribution.mean().numpy(), cmap='Blues')
+    plt.imshow(tf.math.softmax(ql.distribution.mean(), axis=1).numpy(),
+               cmap='Blues')
     plt.title(r'$\ell$ mean posterior probability', fontsize=16)
     plt.colorbar()
     plt.savefig(os.path.join(out_folder, 'l.pdf'))

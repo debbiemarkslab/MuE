@@ -2,8 +2,8 @@ import numpy as np
 import tensorflow.compat.v2 as tf
 from tensorflow_probability import distributions as tfpd
 
-import sparse_core as mue
-import sparse_util
+from mue import sparse_core as mue
+from mue import sparse_util
 
 import pdb
 
