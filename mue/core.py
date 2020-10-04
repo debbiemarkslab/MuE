@@ -185,7 +185,7 @@ def log_onehot_encoder(x, alphabet_size, eps, dtype):
 
 def encode(x, uln0, rln0, lln0,
            latent_length, latent_alphabet_size, alphabet_size,
-           padded_data_length, transfer_mats, dtype=tf.float32, eps=1e-32):
+           padded_data_length, transfer_mats, dtype=tf.float64, eps=1e-32):
     """First layer of encoder, using the MuE mean."""
 
     # Set initial sequence (replace inf with large number)
