@@ -29,7 +29,7 @@ Once the models are trained, there are scripts for visualizing the results (`vis
 
 ### FactorMuE
 
-To run the example FactorMuE model, on the example dataset `examples/data1.fasta`, enter
+To run the example FactorMuE model, on the example dataset `examples/data1.fasta`, from the `model` directory run
 
     python FactorMuE.py examples/factor_config.cfg
 
