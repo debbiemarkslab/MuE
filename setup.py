@@ -8,7 +8,7 @@ setuptools.setup(
     version="0.0.1",
     author="Eli Weinstein",
     author_email="eweinstein@g.harvard.edu",
-    description="A package for making H-MuE models in Edward2.",
+    description="A package for making MuE output models in Edward2.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/debbiemarkslab/MuE",
