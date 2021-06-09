@@ -1,10 +1,10 @@
 
 
 # MuE
-This package provides a toolbox for building generative and predictive probabilistic models of biological sequences, as described in  [Weinstein and Marks (2020)](https://www.biorxiv.org/content/10.1101/2020.07.31.231381v1). It is implemented in the probabilistic programming language Edward2, with a Tensorflow backend.
+This package provides a toolbox for building generative and predictive probabilistic models of biological sequences, as described in  [Weinstein and Marks (2021)](https://www.biorxiv.org/content/10.1101/2020.07.31.231381v2). It is implemented in the probabilistic programming language Edward2, with a Tensorflow backend.
 
  - The core `mue` package has tools for working with the MuE distribution.
- - The `models` folder has two key example MuE output models, the FactorMuE and the RegressMuE, which illustrate how to use the `mue` package.
+ - The `models` folder has two key example MuE observation models, the FactorMuE and the RegressMuE, which illustrate how to use the `mue` package.
 
 
 ## Installation
@@ -19,7 +19,7 @@ This shouldn't take more than a few minutes. You can find out more about the pac
 
 To run the models at large scale, you will need to make sure you have access to a GPU with CUDA installed. See https://www.tensorflow.org/install/gpu for further support.
 
-## Demo MuE output models
+## Demo MuE observation models
 
 To run the example models, first clone this MuE repo and navigate to the `models` directory.
 Each model (`FactorMuE.py` and `RegressMuE.py`) is configured with a separate config file, such as `examples/factor_config.cfg` (for `FactorMuE.py`) and  `examples/regress_config.cfg` (for `RegressMuE.py`). The config file controls the dataset, hyperparameters, training time, etc. Descriptions of all the options can be found in the config files themselves.
@@ -103,14 +103,14 @@ To run the FactorMuE or RegressMuE on your own data,
  - For this Edward2 implementation, GPUs typically run out of memory when working with sequences longer than about 275 amino acids. Longer sequences must currently be run on the CPU.
 
 
-## Writing new MuE output models
+## Writing new MuE observation models
 
-Writing new MuE output models requires a familiarity with building and training probabilistic models in Edward2. There are four key utility functions in the `mue` package:
+Writing new MuE observation models requires a familiarity with building and training probabilistic models in Edward2. There are four key utility functions in the `mue` package:
 
  - `make_transfer(M, dtype=tf.float64)` takes in the length of the ancestral sequence M and provides a set of constant transfer matrices (`transfer_mats`) that are used to structure the MuE distribution. It should be run once, before the training loop.
  - `make_hmm_params(vxln, vcln, uln, rln, lln, transfer_mats, dtype=tf.float64)` takes in the log of the MuE parameters, along with the transfer matrix returned by `make_transfer`, and returns the parameters of a hidden Markov model (HMM). These parameters can be fed to the HMM distribution in tensorflow probability.
  - `hmm_log_prob(distr, x, xlen)` takes in a tensorflow probability HMM distribution, and returns the probability of generating a sequence `x` of length `xlen` (the sequence is represented as a one-hot and padded encoding) . It's an alternative to the built-in tensorflow probability HMM log_prob function, which was until very recently incorrect.
- -  `encode` offers a utility for building amortized inference networks for MuE output models with local latent variables; an example of its usage is in the `FactorMuE.py` script.
+ -  `encode` offers a utility for building amortized inference networks for MuE observation models with local latent variables; an example of its usage is in the `FactorMuE.py` script.
 
 ## Tests
 To run the unit tests, navigate to the `tests` directory of the repo and run
