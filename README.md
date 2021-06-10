@@ -1,11 +1,7 @@
 
 
 # MuE
-This package provides a toolbox for building generative and predictive probabilistic models of biological sequences, as described in  [Weinstein and Marks (2021)](https://www.biorxiv.org/content/10.1101/2020.07.31.231381v2). It is implemented in the probabilistic programming language Edward2, with a Tensorflow backend. An implementation in Pyro is also available as part of the Pyro package, see [docs](https://docs.pyro.ai/en/dev/contrib.mue.html) and [examples](https://github.com/pyro-ppl/pyro/tree/dev/examples/contrib/mue).
-
- - The core `mue` package has tools for working with the MuE distribution.
- - The `models` folder has two key example MuE observation models, the FactorMuE and the RegressMuE, which illustrate how to use the `mue` package.
-
+This package provides a toolbox for building generative and predictive probabilistic models of biological sequences, as described in  [Weinstein and Marks (2021)](https://www.biorxiv.org/content/10.1101/2020.07.31.231381v2). It is implemented in the probabilistic programming language Edward2, with a Tensorflow backend. Note that an implementation of the MuE in Pyro is also available as part of the Pyro package, see [docs](https://docs.pyro.ai/en/dev/contrib.mue.html) and [examples](https://github.com/pyro-ppl/pyro/tree/dev/examples/contrib/mue).
 
 ## Installation
 
